@@ -5,10 +5,10 @@
 # Comment: Configures the base client
 # History:	R1	2016-09-14	Levell James	Initial Build
 # --------------------------------------------------------------------------
-cls
+Clear-Host
 
 #Verify if admin permission, returns true or false
-Function Verify-Admin
+Function Test-Admin
 {
 	([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
 }
@@ -22,27 +22,38 @@ Function Install-Requirments
 #Installs the additional software
 Function Install-Software
 {
+    #support
     choco install TeamViewer -iy
+
+    #runtimes
     choco install Silverlight -iy
-    choco install Firefox -iy
     choco install flashplayerplugin -iy
+    choco install javaruntime
+
+    #browser
+    choco install Firefox -iy
     choco install googlechrome -iy
+
+    #medien
     choco install adobereader -iy
     choco install vlc -iy
-    choco install dropbox -iy
     choco install itunes -iy
     choco install spotify -iy
+
+    #utilities
+    choco install dropbox -iy
 }
 
 #installs all updates
 Function Install-Updates
 {
-    Install-Module PSWindowsUpdate
+    Install-Module PSWindowsUpdate -Force
+    Add-WUServiceManager -ServiceID 7971f918-a847-4430-9279-4a52d1efe18d -Confirm:$false
     Get-WUInstall –MicrosoftUpdate –AcceptAll –AutoReboot
 }
 
 #Main Function which configures the client
-Function Configure-Client 
+Function Set-Client 
 {
 	param (
         [Parameter(Mandatory=$true)]
@@ -53,15 +64,17 @@ Function Configure-Client
     {
         Write-Host "powershell version test passed" -ForegroundColor Green
 
-        if(Verify-Admin)
+        if(Test-Admin)
         {
             Write-Host "adminpermission found, continue to run the script" -ForegroundColor Green
 
             Rename-Computer -NewName $Hostname
 	
-	       Install-Requirments
+	        Install-Requirments
 
-           Install-Software
+            Install-Software
+
+            Install-Updates
         }
         else
         {
@@ -70,6 +83,6 @@ Function Configure-Client
     }
     else
     {
-        Write-Host "not correct version of powershell installed 5 min" -ForegroundColor Red
+        Write-Host "not correct version of powershell installed. Requirement is 5 or greater" -ForegroundColor Red
     }
 }
