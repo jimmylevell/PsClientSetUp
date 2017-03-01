@@ -17,6 +17,12 @@ Function Test-Admin
 Function Install-Requirments
 {
     Invoke-WebRequest https://chocolatey.org/install.ps1 -UseBasicParsing | Invoke-Expression
+
+    Start-Sleep -Seconds 10
+    choco install chocolatey-core.extension 
+    choco upgrade chocolatey-core.extension 
+
+    choco upgrade all
 }
 
 #Installs the additional software
@@ -28,7 +34,7 @@ Function Install-Software
     #runtimes
     choco install Silverlight -iy
     choco install flashplayerplugin -iy
-    choco install javaruntime
+    choco install javaruntime -iy
 
     #browser
     choco install Firefox -iy
@@ -47,6 +53,7 @@ Function Install-Software
 #installs all updates
 Function Install-Updates
 {
+    Install-PackageProvider -Name NuGet -force
     Install-Module PSWindowsUpdate -Force
     Add-WUServiceManager -ServiceID 7971f918-a847-4430-9279-4a52d1efe18d -Confirm:$false
     Get-WUInstall –MicrosoftUpdate –AcceptAll –AutoReboot
@@ -60,6 +67,16 @@ Function Set-Client
 		$Hostname = ""
 	)
 	
+    $date = get-date -format 'ddMMyyyy'
+    $path = "c:\temp"
+    $logFile = $path + "\" + $date + ".txt"
+
+    New-Item -Path $path -ItemType Directory -ErrorAction SilentlyContinue
+
+    Write-host "Start Logging" >> $logFile
+
+    Start-Transcript -Path $logFile
+
     if($PSVersionTable.PSVersion.Major -ge 5)
     {
         Write-Host "powershell version test passed" -ForegroundColor Green
@@ -67,6 +84,8 @@ Function Set-Client
         if(Test-Admin)
         {
             Write-Host "adminpermission found, continue to run the script" -ForegroundColor Green
+            
+            Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force
 
             Rename-Computer -NewName $Hostname
 	
@@ -85,4 +104,10 @@ Function Set-Client
     {
         Write-Host "not correct version of powershell installed. Requirement is 5 or greater" -ForegroundColor Red
     }
+
+    Write-Host "Set the executionpolicy to a usefull value" -ForegroundColor Yellow
+
+    Stop-Transcript
+
+    explorer $path
 }
