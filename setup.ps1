@@ -56,7 +56,7 @@ Function Install-Updates
     Install-PackageProvider -Name NuGet -force
     Install-Module PSWindowsUpdate -Force
     Add-WUServiceManager -ServiceID 7971f918-a847-4430-9279-4a52d1efe18d -Confirm:$false
-    Get-WUInstall â€“MicrosoftUpdate â€“AcceptAll â€“AutoReboot
+    Get-WUInstall –MicrosoftUpdate –AcceptAll –AutoReboot
 }
 
 #Main Function which configures the client
