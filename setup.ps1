@@ -1,4 +1,4 @@
-# -------------------------------------------------------------------------
+ï»¿# -------------------------------------------------------------------------
 # Author: James Levell
 # Date: 2016-09-14
 # Version: 1.0
@@ -43,11 +43,17 @@ Function Install-Software
     #medien
     choco install adobereader -iy
     choco install vlc -iy
-    choco install itunes -iy
+    #choco install itunes -iy
     choco install spotify -iy
 
     #utilities
     choco install dropbox -iy
+    choco install filezilla -iy
+    choco install visualstudiocode -iy
+    choco install winscp -iy
+
+    #games
+    choco install steam -iy
 }
 
 #installs all updates
@@ -56,7 +62,17 @@ Function Install-Updates
     Install-PackageProvider -Name NuGet -force
     Install-Module PSWindowsUpdate -Force
     Add-WUServiceManager -ServiceID 7971f918-a847-4430-9279-4a52d1efe18d -Confirm:$false
-    Get-WUInstall –MicrosoftUpdate –AcceptAll –AutoReboot
+    Get-WUInstall -MicrosoftUpdate -Install -AcceptAll -AutoReboot
+    Get-WUInstall -WindowsUpdate -Install -AcceptAll -AutoReboot
+}
+
+#installs all optional features
+Function Install-OptionalFeatures
+{
+    Enable-WindowsOptionalFeature -FeatureName Windows-Defender-ApplicationGuard -All -Online -NoRestart
+    Enable-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V -All -Online -NoRestart
+    Enable-WindowsOptionalFeature -FeatureName TelnetClient -All -Online -NoRestart
+    Enable-WindowsOptionalFeature -FeatureName Microsoft-Windows-Subsystem-Linux -All -Online -NoRestart
 }
 
 #Main Function which configures the client
@@ -94,6 +110,8 @@ Function Set-Client
             Install-Software
 
             Install-Updates
+
+            Install-OptionalFeatures
         }
         else
         {
