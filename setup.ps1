@@ -4,6 +4,7 @@
 # Version: 1.0
 # Comment: Configures the base client
 # History:	R1	2016-09-14	Levell James	Initial Build
+#		R2	2020-04-09	Levell James	Updated for new laptop
 # --------------------------------------------------------------------------
 Clear-Host
 
@@ -32,25 +33,32 @@ Function Install-Software
     choco install TeamViewer -iy
 
     #runtimes
-    choco install Silverlight -iy
-    choco install flashplayerplugin -iy
     choco install javaruntime -iy
 
     #browser
     choco install Firefox -iy
     choco install googlechrome -iy
+    choco install microsoft-edge-insider-dev -iy
 
     #medien
-    choco install adobereader -iy
     choco install vlc -iy
-    #choco install itunes -iy
     choco install spotify -iy
+    choco install audacity -iy
+    choco install gimp -iy
 
     #utilities
     choco install dropbox -iy
+    choco install googledrive -iy
+    choco install putty -iy
     choco install filezilla -iy
     choco install visualstudiocode -iy
+    choco install azure-data-studio -iy
     choco install winscp -iy
+    choco install citrix-receiver -iy
+    choco install git -iy
+    choco install jdownloader -iy
+    choco install notepadplusplus.install -iy
+    choco install openvpn -iy
 
     #games
     choco install steam -iy
